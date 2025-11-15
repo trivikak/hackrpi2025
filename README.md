@@ -67,9 +67,10 @@ TRRAM is a web platform designed to help RPI students navigate course registrati
 ### Installation
 
 1. Clone the repository:
-    `git clone https://github.com/your-org/majorpath.git`
-    ```cd majorpath
-    Backend Setup
+    git clone https://github.com/trivikak/hackrpi2025
+    cd hackrpi2025
+
+2. Backend Setup
     cd backend
     npm install
     npm run dev```
@@ -85,13 +86,15 @@ TRRAM is a web platform designed to help RPI students navigate course registrati
     python scrape.py
 
 ### Project Structure (example)
-majorpath/
+
+hackrpi2025/
 │
 ├── frontend/        # React frontend
 ├── backend/         # API server
 ├── scraper/         # Data scraping scripts
 ├── data/            # Processed and cleaned datasets
 ├── docs/            # Additional documentation
+├── LICENSE
 └── README.md
 
 ### Data Use and Compliance
@@ -103,15 +106,16 @@ Before scraping or integrating data, confirm compliance with:
 - Avoid scraping authenticated SIS content unless explicitly permitted.
 
 ### Roadmap
-    Add multi-major planning support
-    Integrate schedule conflict detection
-    Expand elective recommendation model
-    Enable exporting plans to PDF and calendars
-    Add user authentication and cloud data syncing
-    Contributing
-    Contributions are welcome.
-    Open issues for bugs, questions, or feature suggestions.
-    Submit pull requests following standard GitHub workflow.
+- Add multi-major planning support
+- Integrate schedule conflict detection
+- Expand elective recommendation model
+- Enable exporting plans to PDF and calendars
+- Add user authentication and cloud data syncing
+
+### Contributing
+- Contributions are welcome.
+- Open issues for bugs, questions, or feature suggestions.
+- Submit pull requests following standard GitHub workflow.
 
 ### License
 MIT License
