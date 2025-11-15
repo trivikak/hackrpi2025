@@ -66,7 +66,7 @@ TRRAM is a web platform designed to help RPI students navigate course registrati
 
 ### Program Stucture
 
-1. Scraper:
+1. Scraper
 ```
 rpi_courses # Has the RPICourses scraping software by Jeff Hui
 coursescraper.py  # Main implementation of the course scraping software
@@ -78,7 +78,6 @@ coursescraper.py  # Main implementation of the course scraping software
 
 2. Frontend Setup
 ```
-index.html  # Website html
 TRRAM.jsx   # Website interactive html
 CNAME   # Website name
 ```
