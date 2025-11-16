@@ -3,120 +3,180 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>TRRAM Academic Schedule Planner</title>
-    <!-- Tailwind CSS CDN -->
-    <script src="https://cdn.tailwindcss.com"></script>
-    <!-- Inter Font -->
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@100..900&display=swap" rel="stylesheet">
-    <!-- Custom Tailwind Configuration for CRT Theme -->
-    <script>
+    <title>TRRAM Academic Schedule Planner (Retro Outline Glow)</title>
+    
+<script src="https://cdn.tailwindcss.com"></script>
+    
+<link href="https://fonts.googleapis.com/css2?family=VT323&display=swap" rel="stylesheet">
+    
+    
+<script>
         tailwind.config = {
+            darkMode: 'class', // Enable class-based dark mode
             theme: {
                 extend: {
                     colors: {
-                        'crt-dark': '#0A0A0A',
-                        'crt-green-bright': '#66FF66',
-                        'crt-green-medium': '#00B300',
-                        'crt-yellow-bright': '#FFFF66',
+                        // RPI-inspired Colors (Used in 'RPI Red & Black' theme)
+                        'rpi-red': '#FF4455', // Brighter red for glow
+                        'rpi-dark': '#111111', 
+                        'rpi-light-gray': '#E0E0E0',
+                        'rpi-gold': '#FFCC00', 
                     },
                 },
             },
         }
     </script>
     <style>
-        /* Base styles using Inter font */
+        /* Base styles using VT323 font */
         body {
-            font-family: 'Inter', sans-serif;
+            font-family: 'VT323', monospace;
             transition: background-color 0.5s, color 0.5s;
+            text-rendering: optimizeLegibility; 
+            font-size: 1.125rem; /* Increase base font size slightly for readability */
         }
-        /* Specific CRT terminal font style */
-        .font-mono-crt {
-            font-family: monospace;
+        
+        /* Custom Border Glow Effect */
+        .border-glow {
+            box-shadow: 0 0 8px 2px currentColor, inset 0 0 8px 2px currentColor; /* Outer and inner glow */
+            transition: box-shadow 0.3s ease-in-out;
         }
-        /* Style for the terminal-like container */
-        .crt-container {
-            box-shadow: 0 0 30px #66FF66, inset 0 0 15px #66FF66;
-            transition: border-color 0.5s, box-shadow 0.5s, background-color 0.5s;
+        
+        /* Custom button shadow effects for retro/chunky look */
+        .shadow-button {
+            border-width: 3px; /* Thicker borders */
+            box-shadow: 4px 4px 0 currentColor;
+            line-height: 1;
         }
-        /* Style for interactive elements in dark mode */
-        .dark .interactive-button {
-             box-shadow: 2px 2px 0 #66FF66;
+        .shadow-button:hover {
+            box-shadow: 5px 5px 0 currentColor;
         }
-        .dark .interactive-button:hover {
-             box-shadow: 3px 3px 0 #66FF66;
+        
+        /* Ensure select elements use the font */
+        select {
+            font-family: 'VT323', monospace;
         }
+        
+        /* Force scrollbar to be visible for the retro feel */
+        ::-webkit-scrollbar {
+            width: 12px;
+            height: 12px;
+        }
+        ::-webkit-scrollbar-track {
+            background: var(--scrollbar-track-color, #222);
+            border: 1px solid var(--scrollbar-border-color, #444);
+        }
+        ::-webkit-scrollbar-thumb {
+            background: var(--scrollbar-thumb-color, #666);
+            border: 1px solid var(--scrollbar-border-color, #888);
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: var(--scrollbar-thumb-hover-color, #999);
+        }
+        
+        /* Apply scrollbar colors based on theme, handled by JS */
+        html.theme-dark-terminal {
+            --scrollbar-track-color: #111;
+            --scrollbar-border-color: #0d0;
+            --scrollbar-thumb-color: #0f0;
+            --scrollbar-thumb-hover-color: #3f3;
+        }
+        html.theme-rpi-red-black {
+            --scrollbar-track-color: #111;
+            --scrollbar-border-color: #C4001A;
+            --scrollbar-thumb-color: #FF4455;
+            --scrollbar-thumb-hover-color: #FF7788;
+        }
+        /* Add more theme-specific scrollbar styles here as needed */
     </style>
 </head>
 
 <body class="bg-gray-100 text-gray-900 min-h-screen p-4 sm:p-8 flex justify-center">
 
     <div id="app-container" class="w-full max-w-6xl p-4 sm:p-6 md:p-8 relative z-10 
-        border-4 shadow-xl rounded-lg overflow-hidden transition-colors duration-500
-        border-gray-900 bg-white font-mono-crt">
+        border-4 shadow-xl rounded-none transition-colors duration-500 
+        border-gray-900 bg-white">
 
-        <!-- Header -->
-        <header class="mb-6 border-b-4 pb-3 flex justify-between items-start border-gray-900">
+        
+<header class="mb-6 border-b-4 pb-3 flex flex-col sm:flex-row justify-between items-start sm:items-end border-gray-900">
             <div>
-                <h1 class="text-2xl sm:text-3xl font-bold uppercase flex items-center text-gray-900">
-                    <!-- Terminal Icon -->
-                    <svg class="w-6 h-6 mr-2 mb-1 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M12 18s-4 0-4-4 4-8 4-8 4 4 4 8-4 4-4 4zM12 2v2M4.22 8.22l1.42 1.42M19.78 8.22l-1.42 1.42M2 12h2M20 12h-2M6.41 17.59l1.42-1.42M17.59 17.59l-1.42-1.42"/></svg>
+                <h1 class="text-3xl sm:text-4xl font-bold uppercase flex items-center">
+                    
+                    <!-- NEW PIXEL ART TRAM ICON (Uses parent's 'text-rpi-red' color via currentColor) -->
+                    <svg id="header-icon" class="w-8 h-8 mr-2 mb-1 text-rpi-red" fill="none" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+                        <!-- Tram Body (Main block, uses parent color) -->
+                        <rect x="2" y="5" width="16" height="8" fill="currentColor" />
+                        <!-- Roof Detail (A slightly darker color, assuming dark themes mostly) -->
+                        <rect x="3" y="4" width="14" height="1" fill="currentColor" opacity="0.8" />
+                        <!-- Windows (Dark fill for screen/glass) -->
+                        <rect x="4" y="7" width="3" height="4" fill="#111111" /> 
+                        <rect x="8" y="7" width="3" height="4" fill="#111111" />
+                        <rect x="12" y="7" width="3" height="4" fill="#111111" />
+                        <!-- Wheels (Solid Black) -->
+                        <rect x="3" y="14" width="2" height="2" fill="#000000" />
+                        <rect x="15" y="14" width="2" height="2" fill="#000000" />
+                    </svg>
+                    
                     T.R.R.A.M.
                 </h1>
-                <p id="user-id-display" class="text-sm ml-8 italic text-indigo-600">
+                <p id="user-id-display" class="text-base ml-8 italic text-gray-600">
                     Academic Plan Generator (User ID: Loading...)
                 </p>
             </div>
             
-            <!-- Theme Toggle Button -->
-            <button id="theme-toggle" class="p-2 border-2 text-sm transition-colors rounded-none border-gray-900 bg-gray-300 text-gray-900 hover:bg-gray-400" title="Toggle Theme">
-                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"></path></svg>
-            </button>
+            
+<div class="mt-4 sm:mt-0 w-full sm:w-auto">
+                <label for="color-theme" class="sm:block mb-1 text-sm uppercase font-semibold text-right hidden">Color Theme:</label>
+                <select id="color-theme" class="w-full sm:w-40 p-2 border-2 rounded-none focus:ring-0">
+                    
+</select>
+            </div>
         </header>
 
-        <div class="text-sm sm:text-base">
+        <div class="text-base sm:text-lg">
             
-            <!-- Input/Configuration Section -->
-            <div class="w-full mb-8 p-3 border-2 border-dashed border-gray-700">
-                <label class="block mb-2 text-sm uppercase font-bold text-indigo-600">
+            
+<div id="config-panel" class="w-full mb-8 p-4 border-2 border-dashed border-gray-700 rounded-none">
+                <label id="config-label" class="block mb-4 text-xl uppercase font-extrabold text-rpi-red">
                     T.R.R.A.M. PLAN CONFIGURATION
                 </label>
-                <div class="flex flex-col sm:flex-row space-y-4 sm:space-y-0 sm:space-x-4">
+                
+                <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
                     
-                    <!-- Start Term Selector -->
-                    <div class="flex-1">
-                        <label for="start-term" class="block mb-1 text-xs uppercase font-semibold">Start Term:</label>
-                        <select id="start-term" class="w-full p-2 border-2 focus:ring-0 focus:outline-none rounded-none font-mono-crt bg-white border-gray-900 text-gray-900">
-                            <!-- Options will be populated by JS -->
-                        </select>
+                    
+<div class="col-span-1 md:col-span-1">
+                        <label for="start-term" class="block mb-1 text-sm uppercase font-semibold">Start Term:</label>
+                        <select id="start-term" class="w-full p-2 border-2 rounded-none focus:ring-0 focus:border-rpi-red">
+                            
+</select>
                     </div>
 
-                    <!-- Arch Away Selector -->
-                    <div class="flex-1">
-                        <label for="arch-away" class="block mb-1 text-xs uppercase font-semibold">Academic Slot to Replace with Arch Away:</label>
-                        <select id="arch-away" class="w-full p-2 border-2 focus:ring-0 focus:outline-none rounded-none font-mono-crt bg-white border-gray-900 text-gray-900">
-                            <!-- Options will be populated by JS -->
-                        </select>
+                    
+<div class="col-span-1 md:col-span-1">
+                        <label for="arch-away" class="block mb-1 text-sm uppercase font-semibold">Arch Slot:</label>
+                        <select id="arch-away" class="w-full p-2 border-2 rounded-none focus:ring-0 focus:border-rpi-red">
+                            
+</select>
                     </div>
 
-                    <button id="recalculate-button" class="px-3 py-2 border-2 font-bold uppercase transition duration-150 rounded-none mt-auto h-full border-gray-900 bg-indigo-500 text-white shadow-[2px_2px_0_#333] hover:bg-indigo-600 hover:shadow-[3px_3px_0_#333]">
-                        <span class="text-xs sm:text-sm">RECALCULATE PLAN</span>
+                    <button id="recalculate-button" class="col-span-1 md:col-span-2 px-3 py-2 border-2 font-bold uppercase transition duration-150 rounded-none mt-auto text-xl h-full text-white bg-rpi-red border-rpi-red shadow-button hover:opacity-90">
+                        <span class="text-sm sm:text-base">UPDATE PLAN</span>
                     </button>
                 </div>
             </div>
 
-            <!-- Status/Info Panel -->
-            <div id="status-panel" class="w-full p-3 mb-6 border-2 rounded-none border-green-600 bg-green-100">
-                <!-- Content populated by JS -->
-            </div>
+            
+<div id="status-panel" class="w-full p-3 mb-6 border-2 rounded-none border-green-600 bg-green-100 text-green-800">
+                
+</div>
 
-            <!-- Schedule Display Grid -->
-            <h2 class="text-xl uppercase font-bold mb-4 border-b pb-1 border-gray-700">
-                ACADEMIC CHRONOLOGY (<span id="start-term-display">Fall 2024</span> Start)
+            
+<h2 id="schedule-title" class="text-2xl uppercase font-bold mb-4 border-b pb-1 border-rpi-red text-rpi-red">
+                ACADEMIC CHRONOLOGY (<span id="start-term-display">Fall 2024</span> START)
             </h2>
             
             <div id="schedule-grid" class="w-full grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 sm:gap-6">
-                <!-- Schedule Cards rendered here by JS -->
-            </div>
+                
+</div>
 
         </div>
     </div>
@@ -165,6 +225,119 @@
             { value: 'Fall 2025', label: 'Fall 2025' },
         ];
 
+        // --- THEME DEFINITIONS ---
+        // Note: Colors are slightly brighter/more saturated to enhance the retro glow effect.
+        const THEMES = {
+            'light-classic': {
+                bodyBg: 'bg-gray-100', bodyText: 'text-gray-900',
+                containerBg: 'bg-white', containerBorder: 'border-gray-900',
+                headerText: 'text-gray-900', headerAccent: 'text-indigo-600', headerBorder: 'border-gray-900',
+                buttonBg: 'bg-indigo-500', buttonText: 'text-white', buttonBorder: 'border-gray-900',
+                configBorder: 'border-gray-700', configLabel: 'text-indigo-600',
+                cardBg: 'bg-white', cardBorder: 'border-gray-900', cardHeaderText: 'text-indigo-600',
+                archBg: 'bg-yellow-100', archBorder: 'border-yellow-600', archText: 'text-yellow-700',
+                displacedBg: 'bg-gray-100', displacedBorder: 'border-gray-400', displacedText: 'text-gray-600',
+                selectBg: 'bg-white', selectText: 'text-gray-900', selectBorder: 'border-gray-400',
+                glowColor: 'rgba(99, 102, 241, 0.7)', // indigo-500 semi-transparent for glow
+            },
+            'dark-terminal': {
+                bodyBg: 'bg-gray-950', bodyText: 'text-green-400', 
+                containerBg: 'bg-gray-900', containerBorder: 'border-green-400',
+                headerText: 'text-green-400', headerAccent: 'text-cyan-400', headerBorder: 'border-green-400',
+                buttonBg: 'bg-cyan-600', buttonText: 'text-gray-950', buttonBorder: 'border-cyan-400',
+                configBorder: 'border-green-400', configLabel: 'text-green-400',
+                cardBg: 'bg-gray-900', cardBorder: 'border-green-400', cardHeaderText: 'text-cyan-400',
+                archBg: 'bg-gray-800', archBorder: 'border-yellow-500', archText: 'text-yellow-400',
+                displacedBg: 'bg-gray-800', displacedBorder: 'border-gray-600', displacedText: 'text-gray-400',
+                selectBg: 'bg-gray-800', selectText: 'text-green-400', selectBorder: 'border-green-400',
+                glowColor: 'rgba(0, 255, 0, 0.7)', // green-400 semi-transparent for glow
+            },
+            'rpi-red-black': {
+                bodyBg: 'bg-gray-950', bodyText: 'text-rpi-light-gray',
+                containerBg: 'bg-rpi-dark', containerBorder: 'border-rpi-red',
+                headerText: 'text-rpi-light-gray', headerAccent: 'text-rpi-red', headerBorder: 'border-rpi-red',
+                buttonBg: 'bg-rpi-red', buttonText: 'text-rpi-light-gray', buttonBorder: 'border-rpi-red',
+                configBorder: 'border-rpi-red', configLabel: 'text-rpi-red',
+                cardBg: 'bg-gray-800', cardBorder: 'border-rpi-red', cardHeaderText: 'text-rpi-red',
+                archBg: 'bg-gray-700', archBorder: 'border-rpi-gold', archText: 'text-rpi-gold',
+                displacedBg: 'bg-gray-700', displacedBorder: 'border-gray-600', displacedText: 'text-gray-400',
+                selectBg: 'bg-gray-700', selectText: 'text-rpi-light-gray', selectBorder: 'border-gray-600',
+                glowColor: 'rgba(255, 68, 85, 0.7)', // rpi-red semi-transparent for glow
+            },
+            'pastel-dream': {
+                bodyBg: 'bg-blue-50', bodyText: 'text-gray-800',
+                containerBg: 'bg-white', containerBorder: 'border-pink-400',
+                headerText: 'text-blue-600', headerAccent: 'text-pink-500', headerBorder: 'border-pink-400',
+                buttonBg: 'bg-blue-400', buttonText: 'text-white', buttonBorder: 'border-pink-500',
+                configBorder: 'border-pink-400', configLabel: 'text-blue-600',
+                cardBg: 'bg-white', cardBorder: 'border-pink-400', cardHeaderText: 'text-blue-500',
+                archBg: 'bg-pink-100', archBorder: 'border-pink-500', archText: 'text-pink-600',
+                displacedBg: 'bg-blue-100', displacedBorder: 'border-blue-300', displacedText: 'text-gray-500',
+                selectBg: 'bg-white', selectText: 'text-gray-800', selectBorder: 'border-pink-400',
+                glowColor: 'rgba(236, 72, 153, 0.7)', // pink-500 semi-transparent for glow
+            },
+            'sunset-warmth': {
+                bodyBg: 'bg-orange-50', bodyText: 'text-stone-800',
+                containerBg: 'bg-white', containerBorder: 'border-orange-600',
+                headerText: 'text-orange-700', headerAccent: 'text-red-500', headerBorder: 'border-orange-600',
+                buttonBg: 'bg-red-600', buttonText: 'text-white', buttonBorder: 'border-red-600',
+                configBorder: 'border-orange-600', configLabel: 'text-orange-700',
+                cardBg: 'bg-white', cardBorder: 'border-orange-600', cardHeaderText: 'text-red-500',
+                archBg: 'bg-amber-100', archBorder: 'border-amber-500', archText: 'text-amber-700',
+                displacedBg: 'bg-orange-100', displacedBorder: 'border-orange-300', displacedText: 'text-stone-600',
+                selectBg: 'bg-white', selectText: 'text-stone-800', selectBorder: 'border-orange-600',
+                glowColor: 'rgba(239, 68, 68, 0.7)', // red-500 semi-transparent for glow
+            },
+            'ocean-breeze': {
+                bodyBg: 'bg-blue-100', bodyText: 'text-gray-800',
+                containerBg: 'bg-white', containerBorder: 'border-teal-600',
+                headerText: 'text-teal-700', headerAccent: 'text-cyan-500', headerBorder: 'border-teal-600',
+                buttonBg: 'bg-teal-600', buttonText: 'text-white', buttonBorder: 'border-cyan-500',
+                configBorder: 'border-teal-600', configLabel: 'text-teal-700',
+                cardBg: 'bg-white', cardBorder: 'border-teal-600', cardHeaderText: 'text-cyan-500',
+                archBg: 'bg-cyan-100', archBorder: 'border-cyan-500', archText: 'text-cyan-700',
+                displacedBg: 'bg-blue-200', displacedBorder: 'border-blue-400', displacedText: 'text-gray-700',
+                selectBg: 'bg-white', selectText: 'text-gray-800', selectBorder: 'border-teal-600',
+                glowColor: 'rgba(6, 182, 212, 0.7)', // cyan-500 semi-transparent for glow
+            },
+            'high-contrast': {
+                bodyBg: 'bg-black', bodyText: 'text-lime-400',
+                containerBg: 'bg-gray-900', containerBorder: 'border-lime-400',
+                headerText: 'text-lime-400', headerAccent: 'text-fuchsia-400', headerBorder: 'border-lime-400',
+                buttonBg: 'bg-fuchsia-600', buttonText: 'text-black', buttonBorder: 'border-fuchsia-400',
+                configBorder: 'border-lime-400', configLabel: 'text-lime-400',
+                cardBg: 'bg-gray-800', cardBorder: 'border-lime-400', cardHeaderText: 'text-fuchsia-400',
+                archBg: 'bg-fuchsia-900', archBorder: 'border-fuchsia-400', archText: 'text-fuchsia-400',
+                displacedBg: 'bg-gray-700', displacedBorder: 'border-lime-400', displacedText: 'text-gray-200',
+                selectBg: 'bg-gray-800', selectText: 'text-lime-400', selectBorder: 'border-lime-400',
+                glowColor: 'rgba(163, 230, 53, 0.7)', // lime-400 semi-transparent for glow
+            },
+            'forest-retreat': {
+                bodyBg: 'bg-green-100', bodyText: 'text-gray-800',
+                containerBg: 'bg-white', containerBorder: 'border-green-800',
+                headerText: 'text-green-800', headerAccent: 'text-yellow-700', headerBorder: 'border-green-800',
+                buttonBg: 'bg-green-700', buttonText: 'text-white', buttonBorder: 'border-yellow-700',
+                configBorder: 'border-green-800', configLabel: 'text-green-800',
+                cardBg: 'bg-white', cardBorder: 'border-green-800', cardHeaderText: 'text-yellow-700',
+                archBg: 'bg-yellow-100', archBorder: 'border-yellow-700', archText: 'text-yellow-800',
+                displacedBg: 'bg-green-200', displacedBorder: 'border-green-500', displacedText: 'text-gray-600',
+                selectBg: 'bg-white', selectText: 'text-gray-800', selectBorder: 'border-green-800',
+                glowColor: 'rgba(21, 128, 61, 0.7)', // green-700 semi-transparent for glow
+            }
+        };
+
+        const THEME_OPTIONS = [
+            { value: 'rpi-red-black', label: 'RPI Red & Black (Bold)' },
+            { value: 'dark-terminal', label: 'Dark Terminal (Green)' },
+            { value: 'light-classic', label: 'Light Classic' },
+            { value: 'pastel-dream', label: 'Pastel Dream (Soft)' },
+            { value: 'sunset-warmth', label: 'Sunset Warmth (Warm)' },
+            { value: 'ocean-breeze', label: 'Ocean Breeze (Cool)' },
+            { value: 'high-contrast', label: 'High Contrast (Bold)' },
+            { value: 'forest-retreat', label: 'Forest Retreat (Earthy)' },
+        ];
+
+
         // --- FIREBASE SETUP ---
         let auth, db, userId;
 
@@ -185,29 +358,25 @@
 
                 onAuthStateChanged(auth, (user) => {
                     userId = user ? user.uid : crypto.randomUUID();
-                    document.getElementById('user-id-display').textContent = `Academic Plan Generator (User ID: ${userId.substring(0, 8)}...)`;
-                    // Rerender plan after auth confirms user ID
+                    // Show a truncated user ID
+                    document.getElementById('user-id-display').textContent = `ACADEMIC PLAN GENERATOR (USER ID: ${userId.substring(0, 8)}...)`;
                     renderSchedule();
                 });
             } catch (error) {
                 console.error("Firebase setup failed, continuing anonymously:", error);
                 userId = crypto.randomUUID();
-                document.getElementById('user-id-display').textContent = `Academic Plan Generator (User ID: ${userId.substring(0, 8)}...)`;
+                document.getElementById('user-id-display').textContent = `ACADEMIC PLAN GENERATOR (USER ID: ${userId.substring(0, 8)}...)`;
                 renderSchedule();
             }
         };
 
-        // --- SCHEDULING LOGIC (The core fix) ---
+        // --- SCHEDULING LOGIC (Unchanged) ---
 
-        /**
-         * Generates the full 9-slot chronological schedule using strict year advancement.
-         */
         const generateChronology = (startTerm, archAwayId) => {
             const [startSemester, startYearStr] = startTerm.split(' ');
             let currentYear = parseInt(startYearStr, 10);
             let currentTerm = startSemester;
 
-            // 1. Identify RPI semesters and the one being displaced
             const archAwayIndex = ALL_ACADEMIC_SEMESTERS.findIndex(s => s.id === archAwayId);
             
             const displacedSemester = ALL_ACADEMIC_SEMESTERS[archAwayIndex];
@@ -216,39 +385,32 @@
             let finalChronology = [];
             let rpiSlotCounter = 0;
 
-            // 2. Generate 9 chronological slots and assign content
             for (let i = 0; i < 9; i++) {
                 
-                // --- CHRONOLOGICAL MAPPING ---
                 const chronologicalName = `${currentTerm} ${currentYear}`;
-
                 let slotContent;
                 let isArchAway = false;
                 
-                // Check if this chronological index is the ARCH slot
                 if (i === archAwayIndex) {
                     slotContent = ARCH_EXPERIENCE;
                     isArchAway = true;
                 } 
-                // Check if this is the 9th chronological slot (5th year)
                 else if (i === 8) {
                     slotContent = displacedSemester;
                 } 
-                // Otherwise, use the next available RPI content slot
                 else {
                     slotContent = rpiSlotsToUse[rpiSlotCounter];
                     rpiSlotCounter++;
                 }
 
-                // Calculate credits and determine display year
                 const displayCourses = slotContent.courses;
                 const credits = isArchAway ? 0 : displayCourses.length * CREDIT_PER_COURSE;
                 
                 let displayYear;
                 if (isArchAway) {
-                    displayYear = 'Arch';
+                    displayYear = 'ARCH';
                 } else if (i === 8) {
-                    displayYear = '5th Year';
+                    displayYear = '5TH YEAR';
                 } else {
                     displayYear = `Y${slotContent.academicYear}`;
                 }
@@ -264,16 +426,11 @@
                     displayYear
                 });
 
-                // 3. ADVANCE CALENDAR FOR NEXT SLOT (i+1)
-                // Fall advances to Spring of the next calendar year
                 if (currentTerm === 'Fall') {
                     currentTerm = 'Spring';
                     currentYear += 1;
-                } 
-                // Spring advances to Fall of the same calendar year
-                else { // 'Spring'
+                } else { // 'Spring'
                     currentTerm = 'Fall';
-                    // currentYear remains the same
                 }
             }
 
@@ -282,82 +439,106 @@
 
         // --- RENDERING FUNCTIONS ---
 
-        const applyTheme = (isDark) => {
+        const applyTheme = (themeName) => {
+            const theme = THEMES[themeName] || THEMES['rpi-red-black'];
             const container = document.getElementById('app-container');
-            const toggleButton = document.getElementById('theme-toggle');
             const header = container.querySelector('header');
-            const selects = container.querySelectorAll('select');
-            const button = document.getElementById('recalculate-button');
-            const statusPanel = document.getElementById('status-panel');
             const headerH1 = header.querySelector('h1');
-            const headerIcon = header.querySelector('svg');
-            const configLabel = container.querySelector('.uppercase.font-bold');
+            const headerIcon = document.getElementById('header-icon');
+            const userIdDisplay = document.getElementById('user-id-display');
+            const configPanel = document.getElementById('config-panel');
+            const configLabel = document.getElementById('config-label');
+            const scheduleTitle = document.getElementById('schedule-title');
+            const button = document.getElementById('recalculate-button');
+            const selects = container.querySelectorAll('select');
+            const statusPanel = document.getElementById('status-panel');
+            
+            // 1. Apply root body/text classes
+            document.body.className = `min-h-screen p-4 sm:p-8 flex justify-center ${theme.bodyBg} ${theme.bodyText}`;
+            
+            // Set the theme class on HTML for scrollbar customization
+            document.documentElement.className = `theme-${themeName}`;
 
-            document.body.className = `min-h-screen p-4 sm:p-8 flex justify-center ${isDark ? 'bg-crt-dark text-crt-green-bright' : 'bg-gray-100 text-gray-900'}`;
-            container.classList.toggle('crt-container', isDark);
+            // 2. Apply container classes (note: rounded-none is set in HTML to keep retro look)
+            container.className = `w-full max-w-6xl p-4 sm:p-6 md:p-8 relative z-10 
+                border-4 shadow-xl rounded-none transition-colors duration-500 border-glow
+                ${theme.containerBorder} ${theme.containerBg}`;
+            // Set glow color for the main container border
+            container.style.boxShadow = `0 0 8px 2px ${theme.glowColor}, inset 0 0 8px 2px ${theme.glowColor}`;
+            container.style.borderColor = theme.containerBorder.split('-').pop(); // Ensure actual border color matches
+            
+            // 3. Apply header classes and theme colors
+            header.className = `mb-6 border-b-4 pb-3 flex flex-col sm:flex-row justify-between items-start sm:items-end border-glow ${theme.headerBorder}`;
+            header.style.boxShadow = `0 0 5px 1px ${theme.glowColor}, inset 0 0 5px 1px ${theme.glowColor}`; // Subtle glow on header border
+            header.style.borderColor = theme.headerBorder.split('-').pop();
 
-            if (isDark) {
-                container.classList.replace('border-gray-900', 'border-crt-green-bright');
-                container.classList.replace('bg-white', 'bg-crt-dark');
-                header.classList.replace('border-gray-900', 'border-crt-yellow-bright');
-                headerH1.classList.replace('text-gray-900', 'text-crt-green-bright');
-                headerIcon.classList.replace('text-indigo-600', 'text-crt-yellow-bright');
-                configLabel.classList.replace('text-indigo-600', 'text-crt-yellow-bright');
-                
-                toggleButton.innerHTML = '<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line></svg>';
-                toggleButton.className = 'p-2 border-2 text-sm transition-colors rounded-none border-crt-green-bright bg-crt-green-medium text-crt-dark interactive-button hover:bg-[#00DD00]';
+            headerH1.className = `text-3xl sm:text-4xl font-bold uppercase flex items-center ${theme.headerText}`;
+            
+            // Apply theme color to the new tram icon
+            headerIcon.setAttribute('class', `w-8 h-8 mr-2 mb-1 ${theme.headerAccent}`); 
+            userIdDisplay.className = `text-base ml-8 italic ${theme.displacedText}`; 
+            
+            // 4. Apply config panel classes and theme colors
+            configPanel.className = `w-full mb-8 p-4 border-2 border-dashed rounded-none border-glow ${theme.configBorder}`;
+            configPanel.style.boxShadow = `0 0 5px 1px ${theme.glowColor}, inset 0 0 5px 1px ${theme.glowColor}`;
+            configPanel.style.borderColor = theme.configBorder.split('-').pop();
 
-                button.className = 'px-3 py-2 border-2 font-bold uppercase transition duration-150 rounded-none mt-auto h-full border-crt-green-bright bg-crt-green-medium text-crt-dark interactive-button hover:bg-[#00DD00]';
+            configLabel.className = `block mb-4 text-xl uppercase font-extrabold ${theme.configLabel}`;
 
-                statusPanel.className = 'w-full p-3 mb-6 border-2 rounded-none border-crt-green-bright bg-crt-green-medium text-crt-dark';
-
-                selects.forEach(s => s.className = 'w-full p-2 border-2 focus:ring-0 focus:outline-none rounded-none font-mono-crt bg-crt-dark border-crt-green-bright text-crt-green-bright');
-            } else {
-                container.classList.replace('border-crt-green-bright', 'border-gray-900');
-                container.classList.replace('bg-crt-dark', 'bg-white');
-                header.classList.replace('border-crt-yellow-bright', 'border-gray-900');
-                headerH1.classList.replace('text-crt-green-bright', 'text-gray-900');
-                headerIcon.classList.replace('text-crt-yellow-bright', 'text-indigo-600');
-                configLabel.classList.replace('text-crt-yellow-bright', 'text-indigo-600');
+            // 5. Apply button classes (shadow-button custom styles remain)
+            button.className = `col-span-1 md:col-span-2 px-3 py-2 border-2 font-bold uppercase transition duration-150 rounded-none mt-auto text-xl h-full ${theme.buttonText} ${theme.buttonBg} ${theme.buttonBorder} shadow-button hover:opacity-90 border-glow`;
+            // Button shadow to match glow
+            button.style.boxShadow = `4px 4px 0 ${theme.buttonText.split('-').pop() !== 'white' ? theme.buttonText.split('-').pop() : theme.buttonText.split('-').pop()}, 0 0 8px 2px ${theme.glowColor}`;
+            button.style.borderColor = theme.buttonBorder.split('-').pop();
+            // Additionally, apply a border-glow to the button itself
+            button.style.setProperty('box-shadow', `4px 4px 0 ${theme.buttonText.split('-').pop() !== 'white' ? theme.buttonText.split('-').pop() : theme.buttonText.split('-').pop()}, 0 0 8px 2px ${theme.glowColor}`);
 
 
-                toggleButton.innerHTML = '<svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"></path></svg>';
-                toggleButton.className = 'p-2 border-2 text-sm transition-colors rounded-none border-gray-900 bg-gray-300 text-gray-900 hover:bg-gray-400';
+            // 6. Apply schedule title classes and theme colors
+            scheduleTitle.className = `text-2xl uppercase font-bold mb-4 border-b pb-1 border-glow ${theme.headerBorder} ${theme.headerText}`;
+            scheduleTitle.style.boxShadow = `0 0 5px 1px ${theme.glowColor}, inset 0 0 5px 1px ${theme.glowColor}`;
+            scheduleTitle.style.borderColor = theme.headerBorder.split('-').pop();
 
-                button.className = 'px-3 py-2 border-2 font-bold uppercase transition duration-150 rounded-none mt-auto h-full border-gray-900 bg-indigo-500 text-white shadow-[2px_2px_0_#333] hover:bg-indigo-600 hover:shadow-[3px_3px_0_#333]';
 
-                statusPanel.className = 'w-full p-3 mb-6 border-2 rounded-none border-green-600 bg-green-100';
+            // 7. Apply selector classes 
+            selects.forEach(s => {
+                s.className = `w-full p-2 border-2 rounded-none focus:ring-0 ${theme.headerAccent.replace('text', 'focus:border')} ${theme.selectBg} ${theme.selectText} ${theme.selectBorder} border-glow`;
+                s.style.boxShadow = `0 0 3px 1px ${theme.glowColor}, inset 0 0 3px 1px ${theme.glowColor}`;
+                s.style.borderColor = theme.selectBorder.split('-').pop();
+            });
 
-                selects.forEach(s => s.className = 'w-full p-2 border-2 focus:ring-0 focus:outline-none rounded-none font-mono-crt bg-white border-gray-900 text-gray-900');
-            }
+            // 8. Apply status panel classes
+            statusPanel.className = `w-full p-3 mb-6 border-2 rounded-none border-glow ${theme.configBorder} ${theme.configLabel.replace('text', 'bg').replace('rpi-red', 'green-900')} ${theme.configLabel.replace('rpi-red', 'green-400')}`;
+            statusPanel.style.boxShadow = `0 0 5px 1px ${theme.glowColor}, inset 0 0 5px 1px ${theme.glowColor}`;
+            statusPanel.style.borderColor = theme.configBorder.split('-').pop();
+
+
+            // 9. Re-render cards to apply their unique theme classes
+            renderSchedule();
         };
 
-        const renderCourseList = (courses, isArchAway) => {
+        const renderCourseList = (courses, isArchAway, theme) => {
             let html = '';
-            const isDark = document.body.classList.contains('bg-crt-dark');
-            const dividerClass = isDark ? 'dark:border-crt-green-medium' : 'border-gray-200';
-            const creditClass = isDark ? 'text-crt-green-bright' : 'text-gray-900';
+            const dividerClass = theme.displacedBorder.replace('border', 'border-t');
 
-            courses.forEach((course, index) => {
-                const border = index < courses.length - 1 ? `border-b ${dividerClass}` : '';
-                const opacity = isArchAway ? 'opacity-80' : '';
+            courses.forEach((course) => {
+                const opacity = isArchAway ? 'opacity-90' : '';
                 
                 html += `
-                    <div class="p-1.5 flex justify-between items-center ${border} ${opacity}">
+                    <div class="p-1.5 flex justify-between items-center border-b ${dividerClass} ${opacity}">
                         <span class="font-bold">${course.code}</span>
                         <span class="text-sm">${course.name}</span>
-                        <span class="text-right font-bold text-sm ${creditClass}">
-                            ${isArchAway ? 'N/A' : `${CREDIT_PER_COURSE} cr.`}
+                        <span class="text-right font-bold text-base ${isArchAway ? theme.archText : theme.bodyText}">
+                            ${isArchAway ? 'N/A' : `${CREDIT_PER_COURSE} CR.`}
                         </span>
                     </div>
                 `;
             });
 
             if (isArchAway) {
-                const textClass = isDark ? 'dark:text-crt-yellow-bright' : 'text-yellow-600';
                 html += `
-                    <p class="italic text-center py-6 ${textClass} text-xs">
-                        This semester is reserved for your Arch Away experience. No RPI credits are earned.
+                    <p class="italic text-center py-6 ${theme.archText} text-sm">
+                        THIS SEMESTER IS RESERVED FOR YOUR ARCH AWAY EXPERIENCE. NO RPI CREDITS ARE EARNED.
                     </p>
                 `;
             }
@@ -366,40 +547,45 @@
         };
 
         const renderSemesterCard = (slot) => {
-            const isDark = document.body.classList.contains('bg-crt-dark');
+            const currentTheme = THEMES[document.getElementById('color-theme').value] || THEMES['rpi-red-black'];
             const isArchAway = slot.isArchAway;
-            const isDisplaced = slot.displayYear === '5th Year';
+            const isDisplaced = slot.displayYear === '5TH YEAR';
 
-            // Dynamic Styling
-            let cardClasses = "border-2 p-3 rounded-none";
-            let headerClasses = "text-lg font-bold mb-2 uppercase text-center border-b pb-1";
-            let footerClasses = "text-sm mt-2 pt-2 border-t text-right font-bold";
+            let cardClasses, headerClasses, footerClasses;
+
+            // Base classes that all cards share for retro feel
+            const baseCardClasses = 'border-2 p-3 rounded-none shadow-lg border-glow';
+            const baseHeaderTextClasses = 'text-xl font-bold mb-2 uppercase text-center border-b pb-1 border-glow';
+            const baseFooterTextClasses = 'text-base mt-2 pt-2 border-t text-right font-bold border-glow';
 
             if (isArchAway) {
-                cardClasses += isDark ? " border-dashed dark:border-crt-yellow-bright dark:bg-[#1a001a]" : " border-dashed border-yellow-600 bg-yellow-50";
-                headerClasses += isDark ? " dark:border-crt-yellow-bright" : " border-yellow-600";
-                footerClasses += isDark ? " dark:border-crt-yellow-bright dark:text-crt-yellow-bright" : " border-yellow-600 text-yellow-600";
+                // Arch Away uses Gold/Yellow/Highlight accent
+                cardClasses = `${baseCardClasses} border-dashed ${currentTheme.archBorder} ${currentTheme.archBg}`;
+                headerClasses = `${baseHeaderTextClasses} ${currentTheme.archBorder} ${currentTheme.archText}`;
+                footerClasses = `${baseFooterTextClasses} ${currentTheme.archBorder} ${currentTheme.archText}`;
             } else if (isDisplaced) {
-                cardClasses += isDark ? " dark:border-crt-yellow-bright dark:bg-[#1a1a00]" : " border-gray-900 bg-white";
-                headerClasses += isDark ? " dark:border-crt-yellow-bright" : " border-gray-700";
-                footerClasses += isDark ? " dark:border-crt-yellow-bright dark:text-crt-yellow-bright" : " border-gray-300 text-gray-600";
+                // 5th Year uses Muted/Displaced accent
+                cardClasses = `${baseCardClasses} ${currentTheme.displacedBorder} ${currentTheme.displacedBg}`;
+                headerClasses = `${baseHeaderTextClasses} ${currentTheme.displacedBorder} ${currentTheme.headerAccent}`;
+                footerClasses = `${baseFooterTextClasses} ${currentTheme.displacedBorder} ${currentTheme.displacedText}`;
             } else {
-                cardClasses += isDark ? " dark:border-crt-green-bright dark:bg-[#001a00]" : " border-gray-900 bg-white";
-                headerClasses += isDark ? " dark:border-crt-green-bright" : " border-gray-700";
-                footerClasses += isDark ? " dark:border-crt-green-medium dark:text-crt-green-bright" : " border-gray-300 text-gray-600";
+                // Standard RPI slots use Primary accent
+                cardClasses = `${baseCardClasses} ${currentTheme.cardBorder} ${currentTheme.cardBg}`;
+                headerClasses = `${baseHeaderTextClasses} ${currentTheme.cardBorder} ${currentTheme.cardHeaderText}`;
+                footerClasses = `${baseFooterTextClasses} ${currentTheme.cardBorder} ${currentTheme.displacedText}`;
             }
 
             return `
-                <div class="${cardClasses}">
-                    <h3 class="${headerClasses}">
+                <div class="${cardClasses}" style="box-shadow: 0 0 8px 2px ${currentTheme.glowColor}, inset 0 0 8px 2px ${currentTheme.glowColor}; border-color: ${currentTheme.glowColor.split(',')[0].replace('rgba(', '').trim()};">
+                    <h3 class="${headerClasses}" style="box-shadow: 0 0 5px 1px ${currentTheme.glowColor}, inset 0 0 5px 1px ${currentTheme.glowColor}; border-color: ${currentTheme.glowColor.split(',')[0].replace('rgba(', '').trim()};">
                         ${slot.id} - ${slot.chronologicalName} 
-                        <span class="text-xs font-normal">
+                        <span class="text-sm font-normal">
                             (${slot.displayYear})
                         </span>
                     </h3>
-                    ${renderCourseList(slot.courses, isArchAway)}
-                    <div class="${footerClasses}">
-                        Total: ${slot.credits} Credits
+                    ${renderCourseList(slot.courses, isArchAway, currentTheme)}
+                    <div class="${footerClasses}" style="box-shadow: 0 0 5px 1px ${currentTheme.glowColor}, inset 0 0 5px 1px ${currentTheme.glowColor}; border-color: ${currentTheme.glowColor.split(',')[0].replace('rgba(', '').trim()};">
+                        TOTAL: ${slot.credits} CREDITS
                     </div>
                 </div>
             `;
@@ -419,41 +605,53 @@
 
             // Update Status Panel
             const statusPanel = document.getElementById('status-panel');
-            statusPanel.innerHTML = `<span class="font-bold">SYSTEM STATUS:</span> Showing **Computer Science** Placeholder Plan. Total Planned Credits: **${totalCredits}**.`;
+            statusPanel.innerHTML = `<span class="font-bold">SYSTEM STATUS:</span> SHOWING **COMPUTER SCIENCE** PLACEHOLDER PLAN. TOTAL PLANNED CREDITS: **${totalCredits}**.`;
+            
         };
 
         // --- INITIALIZATION ---
 
         const init = () => {
-            // Populate selectors
+            const themeSelect = document.getElementById('color-theme');
             const startTermSelect = document.getElementById('start-term');
+            const archAwaySelect = document.getElementById('arch-away');
+
+            // Populate selectors
+            THEME_OPTIONS.forEach(opt => {
+                themeSelect.innerHTML += `<option value="${opt.value}">${opt.label}</option>`;
+            });
             START_TERM_OPTIONS.forEach(opt => {
                 startTermSelect.innerHTML += `<option value="${opt.value}">${opt.label}</option>`;
             });
-
-            const archAwaySelect = document.getElementById('arch-away');
             ARCH_SEMESTER_OPTIONS.forEach(opt => {
                 archAwaySelect.innerHTML += `<option value="${opt.value}">${opt.label}</option>`;
             });
-
-            // Load theme preference
-            const savedTheme = localStorage.getItem('trram-theme');
-            let isDark = savedTheme === 'dark' || (savedTheme === null && window.matchMedia('(prefers-color-scheme: dark)').matches);
-            applyTheme(isDark);
-
-            // Event Listeners
-            const elementsToListen = [startTermSelect, archAwaySelect, document.getElementById('recalculate-button')];
-            elementsToListen.forEach(el => el.addEventListener('change', renderSchedule));
-            document.getElementById('recalculate-button').addEventListener('click', renderSchedule);
             
-            document.getElementById('theme-toggle').addEventListener('click', () => {
-                isDark = !isDark;
-                localStorage.setItem('trram-theme', isDark ? 'dark' : 'light');
-                applyTheme(isDark);
-                renderSchedule(); // Re-render to update card colors
+            // Set initial theme based on preference/default
+            let initialTheme = localStorage.getItem('trram-theme') || 'dark-terminal'; // Default to a strong retro theme
+            themeSelect.value = initialTheme;
+            
+            // Event Listeners
+            // Listener for all three config selectors
+            const elementsToListen = [themeSelect, startTermSelect, archAwaySelect];
+            elementsToListen.forEach(el => el.addEventListener('change', () => {
+                if (el.id === 'color-theme') {
+                    localStorage.setItem('trram-theme', themeSelect.value);
+                    applyTheme(themeSelect.value);
+                } else {
+                    renderSchedule();
+                }
+            }));
+            
+            // Recalculate button listener
+            document.getElementById('recalculate-button').addEventListener('click', () => {
+                applyTheme(themeSelect.value); // Forces theme update and re-render
             });
+            
+            // Initial render
+            applyTheme(initialTheme);
 
-            // Start Firebase setup and initial render
+            // Start Firebase setup
             setupFirebase();
         };
 
