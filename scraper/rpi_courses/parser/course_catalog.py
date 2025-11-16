@@ -6,7 +6,6 @@ from bs4 import BeautifulSoup
 from rpi_courses.web import get 
 from rpi_courses.parser.features import * # All object postfixed with '_feature' will get used.
 
-# --- (Dummy classes for structural integrity remain) ---
 try:
     from rpi_courses.utils import FrozenDict, safeInt
 except ImportError:
@@ -27,14 +26,13 @@ class DummyCrosslisting:
 class CourseCatalog(object):
     """Represents the RPI course catalog, now focused on Program Requirements."""
 
-    # CRITICAL CHANGE: Only use features relevant to this new goal (Program parsing)
+    # Only use features relevant to this goal
     FEATURES = [obj for name, obj in list(globals().items()) if name.endswith('_feature')]
 
     def __init__(self, soup=None):
         """Instanciates a CourseCatalog. Initialized with attributes to prevent AttributeError."""
         self.name = "RPI Course Catalog"
         self.crosslistings = {}
-        # PRIMARY DATA CONTAINER
         self.programs = {} 
         self.courses = {}
         self.soup = soup 
@@ -81,7 +79,6 @@ class CourseCatalog(object):
         for feature in self.FEATURES:
             feature(self, soup)
 
-    # --- Utility Methods (Kept for compatibility) ---
     def crosslisted_with(self, crn):
         return tuple([c for c in self.crosslistings.get(crn, DummyCrosslisting()).crns if c != crn])
 

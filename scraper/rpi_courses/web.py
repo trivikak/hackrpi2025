@@ -1,7 +1,6 @@
 """web.py - Handles all the http interaction of getting the course
 catalog data.
 """
-# --- Python 3 Imports ---
 import urllib.request as urllib_request
 import urllib.error as urllib_error
 import urllib.parse as urllib_parse
@@ -9,11 +8,8 @@ import datetime
 import tempfile
 import PyPDF2 as pyPdf
 from contextlib import closing
-
-# BeautifulSoup 3 is now BeautifulSoup 4 (bs4)
 from bs4 import BeautifulSoup
 
-# Assuming you've updated your config file or have these constants available
 try:
     from .config import ROCS_URL, SIS_URL, COMM_URL 
 except ImportError:
@@ -24,7 +20,7 @@ except ImportError:
 
 import dateutil.parser
 
-# NEW CONSTANTS: Targets the Programs Index page
+# Constants
 PROGRAMS_INDEX_URL = "https://catalog.rpi.edu/content.php?catoid=33&navoid=873" 
 BASE_URL = "https://catalog.rpi.edu/"
 
@@ -34,7 +30,6 @@ def get(url, last_modified=None):
     Returns an empty str on error.
     """
     
-    # FIX: Define a standard User-Agent and create the Request object
     headers = {
         'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36'
     }
@@ -56,17 +51,16 @@ def get(url, last_modified=None):
             return content
             
     except urllib_error.HTTPError as e:
-        print(f"❌ HTTP Error fetching {url}: {e.code}")
+        print(f"HTTP Error fetching {url}: {e.code}")
         return ""
     except urllib_error.URLError as e:
-        print(f"❌ URL Error fetching {url}: {e.reason}")
+        print(f"URL Error fetching {url}: {e.reason}")
         return ""
     except Exception as e:
-        print(f"❌ Unexpected Error fetching {url}: {e}")
+        print(f"Unexpected Error fetching {url}: {e}")
         return ""
 
 
-# --- REWRITTEN DISCOVERY FUNCTION ---
 def list_catalog_urls(index_url=PROGRAMS_INDEX_URL):
     """
     Scrapes the main index page to find all links leading to individual 
@@ -101,7 +95,7 @@ def list_catalog_urls(index_url=PROGRAMS_INDEX_URL):
     return list(program_urls)
 
 
-# --- DEPRECATED SIS FUNCTIONS (Kept as stubs) ---
+
 def list_sis_files_for_date(date=None, url_base=SIS_URL):
     """DEPRECATED: Use list_catalog_urls() for the modern RPI Course Catalog."""
     return []
@@ -112,7 +106,6 @@ def list_sis_files(url_base=SIS_URL):
     return []
 
 
-# --- LEGACY ROCS FUNCTIONS (Kept as stubs) ---
 def list_rocs_files(url=ROCS_URL):
     """Gets the contents of the given url."""
     soup = BeautifulSoup(get(url), 'html.parser')

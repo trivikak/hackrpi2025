@@ -4,7 +4,7 @@
 
 ### Introduction
 
-TRRAM is a web platform designed to help RPI students navigate course registration, understand degree requirements, and build personalized four-year academic plans. The system integrates data scraped from the school's course catalog, major requirement pages, RateMyProfessor, and the school Student Information System (SIS) to generate tailored recommendations.
+TRRAM is a web platform designed to help RPI students navigate course registration, understand degree requirements, and build personalized four-year academic plans. The system aims to integrate data scraped from the school's course catalog, major requirement pages (successful), RateMyProfessor, and the school Student Information System (SIS) to generate tailored recommendations.
 
 ### Features
 
@@ -13,7 +13,7 @@ TRRAM is a web platform designed to help RPI students navigate course registrati
     - Provides recommended sequencing based on prerequisites and program structure
     - Highlights prerequisite chains, co-requisites, and courses with limited availability
 
-2. **Registration Assistance**
+2. **Registration Assistance (soon)**
     - Suggests courses to take each semester based on progress and requirements
     - Shows instructor comparisons using RateMyProfessors data
     - Enables filtering by difficulty, rating, requirement category, and availability
@@ -21,13 +21,13 @@ TRRAM is a web platform designed to help RPI students navigate course registrati
 3. **Integrated Scraped Data**
     - Course catalog: descriptions, credits, scheduling, prerequisites
     - Major requirement trees: cores, electives, distributions
-    - RateMyProfessors: instructor ratings and feedback
-    - SIS data: course offerings and semester availability (only when permitted by institutional policy)
+    - RateMyProfessors: instructor ratings and feedback (soon)
+    - SIS data: course offerings and semester availability (only when permitted by institutional policy) (soon)
 
 4. **Personalized Four-Year Planning**
     - Auto-generates a four-year plan based on the selected major
-    - Allows drag-and-drop reordering of courses across semesters
-    - Tracks progress toward graduation requirements in real time
+    - Allows drag-and-drop reordering of courses across semesters (soon)
+    - Tracks progress toward graduation requirements in real time (soon)
 
 5. **Interest-Based Elective Recommendations**
     - Suggests electives based on interests expressed by the student
@@ -35,7 +35,7 @@ TRRAM is a web platform designed to help RPI students navigate course registrati
     - Recommends courses outside the major that match student goals
 
 6. **Minor and Dual Major Suggestions**
-    - Analyzes requirement overlap to propose viable minors or second majors
+    - Analyzes requirement overlap to propose viable minors or second majors (soon)
     - Estimates additional credits needed and earliest completion timeline
     - Integrates minor/dual-major paths into the four-year plan
 
@@ -43,7 +43,7 @@ TRRAM is a web platform designed to help RPI students navigate course registrati
 
 #### Data Scraper
 - Scrapes course catalog information
-- Extracts degree requirements by major
+- Extracts degree requirements and credit hours by major
 - Collects instructor and course reviews from RateMyProfessors
 - Normalizes all scraped data into a unified JSON schema
 
@@ -51,9 +51,9 @@ TRRAM is a web platform designed to help RPI students navigate course registrati
 - Serves course, requirement, and recommendation data
 - Manages user plans, progress, and preference saving
 - Includes logic for prerequisite resolution and course sequencing
-- Frontend Web Application
 
-#### Searchable course database
+#### Frontend Web Application
+- Searchable course database
 - Four-year plan builder
 - Major/minor comparison interface
 - Registration suggestion dashboard
@@ -68,17 +68,30 @@ TRRAM is a web platform designed to help RPI students navigate course registrati
 
 1. Scraper
 ```
-rpi_courses # Has the RPICourses scraping software by Jeff Hui
-coursescraper.py  # Main implementation of the course scraping software
+rpi_courses # Has the RPICourses scraping setup by Jeff Hui, modified by us
+|--parser
+    |--course_catalog.py   # functions to iterate through the RPI course catalog
+    |__features.py         # used for XML files
+|--sis_parser (inactive)
+|--config.py               # subject codes
+|--models.py               # supposed to store read-only schedules
+|--scheduler.py            # similar to the SIS scheduling system
+|--utils.py
+|__web.py                  # goes web scraping
+masterListScraper.py  # Main implementation of the course scraping software
+normalize_courses.py  # Parses words to fit data tables
+normalized_courses.json
+rpi_courses.json
 ```
 
 2. Backend Setup
 ```
+
 ```
 
 2. Frontend Setup
 ```
-TRRAM.jsx   # Website interactive html
+index.html   # Website interactive html
 CNAME   # Website name
 ```
 
