@@ -1,6 +1,4 @@
 import collections
-
-# CRITICAL CHANGE 1: logger import is assumed to be correct in Py3
 from .config import logger
 
 
