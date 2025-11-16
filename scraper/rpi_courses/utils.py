@@ -1,5 +1,17 @@
 import collections
+import re
 from .config import logger
+
+
+# Regex to find standard RPI course codes (e.g., CSCI 1100, MANE 4030, etc.)
+COURSE_CODE_REGEX = re.compile(r'([A-Z]{3,4}\s\d{4}[A-Z]?)')
+
+def find_course_codes(text):
+    """Extracts a list of unique RPI course codes from a string of text."""
+    if not text:
+        return []
+    # Find all matches and return unique ones
+    return sorted(list(set(COURSE_CODE_REGEX.findall(text))))
 
 
 def safeInt(n, warn_only=False):
@@ -26,7 +38,7 @@ def safeInt(n, warn_only=False):
 
 
 # from SO: http://stackoverflow.com/questions/2703599/what-would-be-a-frozen-dict
-# CRITICAL CHANGE 3: collections.Mapping is deprecated in Py3 and replaced by collections.abc.Mapping
+#  collections.Mapping is deprecated in Py3 and replaced by collections.abc.Mapping
 class FrozenDict(collections.abc.Mapping): 
     """Defines an immutable dict type."""
 
@@ -74,11 +86,10 @@ class FrozenDict(collections.abc.Mapping):
                 self._hash ^= hash(value)
         return self._hash
 
-# CRITICAL CHANGE 6: collections.Mapping is now collections.abc.Mapping
+
 # The import collections line at the top should be changed to: import collections.abc
 # However, for brevity, we assume the import remains 'collections' and use the fully qualified name.
 if hasattr(collections, 'abc'):
     FrozenDict.FROZEN_TYPES[dict] = FrozenDict
 else:
-    # If using Py2/older Py3, keep original structure
     FrozenDict.FROZEN_TYPES[dict] = FrozenDict

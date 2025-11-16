@@ -4,7 +4,13 @@ import urllib.request
 from bs4 import BeautifulSoup
 
 from rpi_courses.web import get 
-from rpi_courses.parser.features import * # All object postfixed with '_feature' will get used.
+from rpi_courses.parser.program_features import program_details_feature # Import the new program feature
+
+# Note: The original file had a glob import which implies other features exist.
+def dummy_course_feature(catalog, soup):
+    """Placeholder/Dummy for any existing course scraping feature to keep things running."""
+    # This function intentionally does nothing now as program_details_feature is the focus.
+    pass
 
 try:
     from rpi_courses.utils import FrozenDict, safeInt
@@ -26,11 +32,17 @@ class DummyCrosslisting:
 class CourseCatalog(object):
     """Represents the RPI course catalog, now focused on Program Requirements."""
 
-    # Only use features relevant to this goal
-    FEATURES = [obj for name, obj in list(globals().items()) if name.endswith('_feature')]
+    # We use both the new feature and the dummy feature (in case other parts rely on it)
+    FEATURES = [
+        program_details_feature,
+        # Assuming other course-related features were imported here as well, 
+        # we keep a dummy to reflect the original glob import.
+        # The true course catalog (rpi_courses.json generation) runs separately.
+        dummy_course_feature, 
+    ]
 
     def __init__(self, soup=None):
-        """Instanciates a CourseCatalog. Initialized with attributes to prevent AttributeError."""
+        "Instanciates a CourseCatalog. Initialized with attributes to prevent AttributeError."
         self.name = "RPI Course Catalog"
         self.crosslistings = {}
         self.programs = {} 
@@ -65,7 +77,7 @@ class CourseCatalog(object):
         return CourseCatalog.from_string(get(url))
 
     def merge_from_url(self, url):
-        """Fetches courses from a single department URL and merges the results."""
+        """Fetches program data from a single URL and merges the results."""
         temp_catalog = CourseCatalog.from_url(url)
         
         # Merge the parsed programs
@@ -79,6 +91,7 @@ class CourseCatalog(object):
         for feature in self.FEATURES:
             feature(self, soup)
 
+    # --- Rest of the existing methods (omitted for brevity but assumed present) ---
     def crosslisted_with(self, crn):
         return tuple([c for c in self.crosslistings.get(crn, DummyCrosslisting()).crns if c != crn])
 

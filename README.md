@@ -71,6 +71,7 @@ TRRAM is a web platform designed to help RPI students navigate course registrati
 rpi_courses # Has the RPICourses scraping setup by Jeff Hui, modified by us
 |--parser
     |--course_catalog.py   # functions to iterate through the RPI course catalog
+    |--program_features.py  # specifically for the programs page in the course catalog
     |__features.py         # used for XML files
 |--sis_parser (inactive)
 |--config.py               # subject codes
