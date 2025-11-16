@@ -1,16 +1,35 @@
 // plannerLogic.js
+
+// --- Imports ---
 const db = require('./db');
 
+// --- Helper Function ---
 /**
- * Step 1 in the agent: Fetches all academic requirements (Major, Minor, Concentration)
- * from the database.
+ * Maps all course prerequisites into a structure for easy checking.
+ * @param {Array} catalog - The full course catalog array.
+ * @returns {Map<string, number>} A Map where key is course_id and value is the count of *unmet* prerequisites.
+ */
+function initializePrereqStatus(catalog) {
+    const prereqStatus = new Map();
+    // Initially, assume all prerequisites are unmet (count = number of prereqs)
+    for (const course of catalog) {
+        // Assuming prerequisites is a JSON array in the DB (or parsed as an array)
+        const prereqs = course.prerequisites || []; 
+        prereqStatus.set(course.course_id, prereqs.length);
+    }
+    return prereqStatus;
+}
+
+// ---------------------------------------------------------------------
+
+/**
+ *Fetches all academic requirements (Major, Minor, Concentration) from the database.
  */
 async function getRequirements(major, minor, concentration) {
     // 1. Combine all programs the user is seeking. Filter out any that are null/empty.
     const programs = [major, minor, concentration].filter(Boolean);
     
     // 2. Fetch the program IDs for the user's selections.
-    // Use an array of program names for the SQL IN clause.
     const programIdsQuery = 'SELECT program_id FROM Programs WHERE name = ANY($1)';
     const programIdResult = await db.query(programIdsQuery, [programs]);
 
@@ -39,25 +58,7 @@ async function getRequirements(major, minor, concentration) {
 }
 
 
-const db = require('./db'); 
-// Assuming getRequirements is defined and exported in this file as well
-// const { getRequirements } = require('./plannerLogic'); 
-
-// --- Helper Function ---
-/**
- * Maps all course prerequisites into a structure for easy checking.
- * @param {Array} catalog - The full course catalog array.
- * @returns {Map<string, number>} A Map where key is course_id and value is the count of *unmet* prerequisites.
- */
-function initializePrereqStatus(catalog) {
-    const prereqStatus = new Map();
-    // Initially, assume all prerequisites are unmet (count = number of prereqs)
-    for (const course of catalog) {
-        const prereqs = course.prerequisites || [];
-        prereqStatus.set(course.course_id, prereqs.length);
-    }
-    return prereqStatus;
-}
+// ---------------------------------------------------------------------
 
 // --- CORE SCHEDULING AGENT ---
 /**
@@ -75,7 +76,6 @@ function generatePlan(requirements, catalog, completedCourses, startYear) {
     const courseLookup = new Map(catalog.map(c => [c.course_id, c]));
     
     // Simple resolution: For now, we only look at specific courses listed in the options_pool
-    // (A real app would handle "choose 3 credits of X" later)
     requirements.forEach(req => {
         if (req.options_pool && Array.isArray(req.options_pool)) {
             req.options_pool.forEach(id => {
@@ -139,9 +139,7 @@ function generatePlan(requirements, catalog, completedCourses, startYear) {
                     return isOffered && prereqsMet;
                 })
                 .sort((a, b) => {
-                    // Rule 3.4 Priority: Prioritize courses with fewer offerings (only offered in Fall, for example)
-                    // and courses that unlock more other courses (highest fan-out).
-                    // This is a simplified priority for illustration.
+                    // Priority: Prioritize courses with fewer offerings
                     return (a.semesters_offered.length - b.semesters_offered.length);
                 });
 
@@ -174,12 +172,6 @@ function generatePlan(requirements, catalog, completedCourses, startYear) {
 
             schedule.push(scheduleSlot);
             
-            // If no courses were scheduled, we break to avoid infinite loops 
-            // and indicate a major scheduling conflict (e.g., core course not offered)
-            // A robust planner would handle conflicts more gracefully.
-            if (scheduledThisSemester.length === 0 && coursePool.length > 0) {
-                 // Do not break yet, let the loop continue to the next year
-            }
         }
     }
 
@@ -190,11 +182,13 @@ function generatePlan(requirements, catalog, completedCourses, startYear) {
             course_id: id,
             reason: "Could not be scheduled due to timing, prerequisites, or credit limits."
         })),
-        message: `Plan generated successfully, with ${coursePool.length} requirements left unmet.`
+        message: `Plan generated successfully, with ${coursePool.length} requirements left unmet.`,
+        plan_timestamp: new Date().toISOString()
     };
 }
 
+// --- Exports (FIXED) ---
 module.exports = {
-    getRequirements: require('./getRequirements'), // Assuming getRequirements is in a separate file or exported here
+    getRequirements, // Exporting the function defined above
     generatePlan
 };

@@ -1,46 +1,58 @@
-require('dotenv').config();
+require('dotenv').config(); // MUST be the first line to load .env variables
+
 const express = require('express');
-const bodyParser = require('body-parser');
+// We no longer need to explicitly require 'body-parser' here!
 const cors = require('cors'); 
+const { getRequirements, generatePlan } = require('./plannerLogic'); 
 
 const app = express();
-// Setting the port to 3001 is common for backends when the frontend uses 3000
-const PORT = 3001; 
+const PORT = process.env.API_PORT || 3001; 
 
-// --- Middleware Setup ---
-app.use(cors()); // Allows frontend to make requests
-app.use(bodyParser.json()); // Allows server to read incoming JSON data
+// --- Middleware Setup (FIXED: Using built-in Express parser) ---
+app.use(cors()); 
+// This is the modern, recommended replacement for bodyParser.json()
+app.use(express.json()); 
 
 // Basic Test Route
 app.get('/', (req, res) => {
-    res.send('Course Planning Backend is Ready!');
+    res.send('Course Planning Backend is Operational and Ready to Serve!');
 });
 
 // --- CORE FEATURE ENDPOINT: Plan Generation ---
-app.post('/api/plan/generate', (req, res) => {
-    // Destructure the expected data from the request body
-    const { major, minor, concentration, start_year } = req.body;
+app.post('/api/plan/generate', async (req, res) => {
+    // 1. Destructure and validate input
+    const { major, minor, concentration, start_year, completed_courses = [] } = req.body;
 
-    console.log(`Received request for: ${major} (Starting Year: ${start_year})`);
+    if (!major || !start_year) {
+        return res.status(400).json({ error: 'Major and start_year are required parameters.' });
+    }
 
-    // In the future, this is where your database logic and planning algorithm will go.
+    try {
+        // --- STEP 1: Data Retrieval ---
+        const { requirements, catalog } = await getRequirements(major, minor, concentration);
+        
+        // --- STEP 2: Run the Scheduling Algorithm ---
+        const finalPlan = generatePlan(
+            requirements, 
+            catalog, 
+            completed_courses, 
+            parseInt(start_year, 10)
+        );
+
+        // --- STEP 3: Send the structured, generated plan back ---
+        res.json(finalPlan); 
     
-    // --- DUMMY RESPONSE (for testing the connection) ---
-    const coursePlan = {
-        major: major,
-        year_1: [
-            { course_id: 'CSCI 1100', name: 'CS I', semester: 'Fall', credits: 4 },
-            { course_id: 'MATH 1010', name: 'Calc I', semester: 'Fall', credits: 4 },
-        ],
-        message: `Plan generated successfully for ${major}. Now connect the frontend!`
-    };
-
-    // Send the structured data back to the frontend
-    res.json(coursePlan);
+    } catch (error) {
+        console.error('API Error during Plan Generation:', error.message);
+        
+        if (error.message.includes('No programs found')) {
+             return res.status(400).json({ error: error.message });
+        }
+        res.status(500).json({ error: 'Failed to generate course plan due to a server error. Please check database connection or data integrity.' });
+    }
 });
 
 // Start the server and listen on the defined port
 app.listen(PORT, () => {
-    console.log(`Server listening on port ${PORT}`);
-    console.log(`Test API at http://localhost:${PORT}/api/plan/generate`);
+    console.log(`Server listening securely on port ${PORT}`);
 });
