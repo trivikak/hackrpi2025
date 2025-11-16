@@ -8,7 +8,7 @@ TRRAM is a web platform designed to help RPI students navigate course registrati
 
 ### Features
 
-1. **Major-Specific Course Guidance**
+1. **Major-Specific Course Guidance (in-progress)**
     - Displays required courses for each major or concentration
     - Provides recommended sequencing based on prerequisites and program structure
     - Highlights prerequisite chains, co-requisites, and courses with limited availability
@@ -118,6 +118,7 @@ Before scraping or integrating data, confirm compliance with:
 - Avoid scraping authenticated SIS content unless explicitly permitted.
 
 ### Roadmap
+-This program is not currently functional. We utilized local databases, and were unable to link that using a server to the frontend properly, which is our first step for further development as we didn't have enough debugging time in 24 hours! What will work when you open http://trram.tech/ is just the frontend with placeholders.
 - Add multi-major planning support
 - Integrate schedule conflict detection
 - Expand elective recommendation model
