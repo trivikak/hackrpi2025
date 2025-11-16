@@ -1,58 +1,110 @@
-require('dotenv').config(); // MUST be the first line to load .env variables
-
 const express = require('express');
-// We no longer need to explicitly require 'body-parser' here!
-const cors = require('cors'); 
-const { getRequirements, generatePlan } = require('./plannerLogic'); 
+const { Pool } = require('pg');
+const cors = require('cors');
+// Loads environment variables (like PGUSER, PGDATABASE, PORT) from the .env file
+require('dotenv').config(); 
 
 const app = express();
-const PORT = process.env.API_PORT || 3001; 
+// Uses the 'PORT' variable defined in your .env file (default is 3001)
+const port = process.env.PORT || 3001; 
 
-// --- Middleware Setup (FIXED: Using built-in Express parser) ---
-app.use(cors()); 
-// This is the modern, recommended replacement for bodyParser.json()
-app.use(express.json()); 
-
-// Basic Test Route
-app.get('/', (req, res) => {
-    res.send('Course Planning Backend is Operational and Ready to Serve!');
+// --- Database Connection Pool ---
+const pool = new Pool({
+    user: process.env.PGUSER,
+    host: process.env.PGHOST,
+    database: process.env.PGDATABASE,
+    password: process.env.PGPASSWORD,
+    port: process.env.PGPORT,
 });
 
-// --- CORE FEATURE ENDPOINT: Plan Generation ---
-app.post('/api/plan/generate', async (req, res) => {
-    // 1. Destructure and validate input
-    const { major, minor, concentration, start_year, completed_courses = [] } = req.body;
-
-    if (!major || !start_year) {
-        return res.status(400).json({ error: 'Major and start_year are required parameters.' });
+// Test DB connection on startup to confirm service is running
+pool.query('SELECT NOW()', (err, res) => {
+    if (err) {
+        console.error('❌ Database connection failed. Is the PostgreSQL service running? Error:', err.message);
+        process.exit(1); 
+    } else {
+        console.log('✅ Database connected successfully at:', res.rows[0].now);
     }
+});
 
+// Middleware
+app.use(cors());
+app.use(express.json());
+
+// --- API Endpoints ---
+
+/**
+ * Endpoint 1: Fetch all available Programs (Majors/Minors)
+ * GET /api/programs
+ * Returns: [{ program_id, name, type }, ...]
+ */
+app.get('/api/programs', async (req, res) => {
     try {
-        // --- STEP 1: Data Retrieval ---
-        const { requirements, catalog } = await getRequirements(major, minor, concentration);
-        
-        // --- STEP 2: Run the Scheduling Algorithm ---
-        const finalPlan = generatePlan(
-            requirements, 
-            catalog, 
-            completed_courses, 
-            parseInt(start_year, 10)
-        );
-
-        // --- STEP 3: Send the structured, generated plan back ---
-        res.json(finalPlan); 
-    
-    } catch (error) {
-        console.error('API Error during Plan Generation:', error.message);
-        
-        if (error.message.includes('No programs found')) {
-             return res.status(400).json({ error: error.message });
-        }
-        res.status(500).json({ error: 'Failed to generate course plan due to a server error. Please check database connection or data integrity.' });
+        const result = await pool.query('SELECT program_id, name, type FROM Programs ORDER BY name;');
+        res.json(result.rows);
+    } catch (err) {
+        console.error('Error fetching programs:', err);
+        res.status(500).json({ error: 'Failed to fetch program list.' });
     }
 });
 
-// Start the server and listen on the defined port
-app.listen(PORT, () => {
-    console.log(`Server listening securely on port ${PORT}`);
+/**
+ * Endpoint 2: Fetch specific Program Requirements by ID
+ * GET /api/requirements/:programId
+ * Returns: { program: {name, type}, requirements: [...] }
+ */
+app.get('/api/requirements/:programId', async (req, res) => {
+    const { programId } = req.params;
+    try {
+        const programResult = await pool.query('SELECT name, type FROM Programs WHERE program_id = $1;', [programId]);
+        if (programResult.rows.length === 0) {
+            return res.status(404).json({ error: 'Program not found.' });
+        }
+        
+        const requirementsQuery = `
+            SELECT 
+                description, 
+                options_pool, 
+                -- Aggregates the full course details for every course in the options_pool
+                (SELECT json_agg(c) FROM Courses c WHERE c.course_id = ANY(SELECT jsonb_array_elements_text(r.options_pool))) AS full_course_details
+            FROM Requirements r 
+            WHERE program_id = $1;
+        `;
+        const requirementsResult = await pool.query(requirementsQuery, [programId]);
+
+        res.json({
+            program: programResult.rows[0],
+            requirements: requirementsResult.rows
+        });
+    } catch (err) {
+        console.error('Error fetching program requirements:', err);
+        res.status(500).json({ error: 'Failed to fetch requirements.' });
+    }
+});
+
+/**
+ * Endpoint 3: Fetch detailed Course information by Course ID
+ * GET /api/course/:courseId
+ * Returns: { course_id, name, credits, semesters_offered, prerequisites, description }
+ */
+app.get('/api/course/:courseId', async (req, res) => {
+    const { courseId } = req.params;
+    try {
+        const result = await pool.query('SELECT * FROM Courses WHERE course_id = $1;', [courseId.toUpperCase()]);
+        
+        if (result.rows.length === 0) {
+            return res.status(404).json({ error: 'Course not found.' });
+        }
+        
+        res.json(result.rows[0]);
+    } catch (err) {
+        console.error('Error fetching course details:', err);
+        res.status(500).json({ error: 'Failed to fetch course details.' });
+    }
+});
+
+
+// Start the server
+app.listen(port, () => {
+    console.log(`🚀 Server listening on port ${port}`);
 });
