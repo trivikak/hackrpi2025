@@ -88,7 +88,19 @@ rpi_program_requirements.json
 
 2. Backend Setup
 ```
-
+node_modules
+dataloader.py
+db.js
+schema.sql
+programs_schema.sql
+plannerLogic.js  # 4-year planner
+package.json
+package-lock.json
+test.py   # Checking courses
+server.js  # Backend program scraper
+programLoader.py  # Storing programs into json file
+normalized_courses.json
+normalized_programs.json
 ```
 
 2. Frontend Setup
