@@ -101,7 +101,7 @@
             <div>
                 <h1 class="text-3xl sm:text-4xl font-bold uppercase flex items-center">
                     
-                    <!-- NEW PIXEL ART TRAM ICON (Uses parent's 'text-rpi-red' color via currentColor) -->
+                    <!-- PIXEL ART TRAM ICON (Uses parent's 'text-rpi-red' color via currentColor) -->
                     <svg id="header-icon" class="w-8 h-8 mr-2 mb-1 text-rpi-red" fill="none" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
                         <!-- Tram Body (Main block, uses parent color) -->
                         <rect x="2" y="5" width="16" height="8" fill="currentColor" />
@@ -141,9 +141,44 @@
                 </label>
                 
                 <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
-                    
-                    
-<div class="col-span-1 md:col-span-1">
+
+                    <!-- Major/Minor Selections -->
+                    <div class="col-span-1 md:col-span-4 grid grid-cols-2 lg:grid-cols-4 gap-4 mb-4">
+                        <!-- Major 1 - Primary (Search bar placeholder) -->
+                        <div class="col-span-2 lg:col-span-1">
+                            <label for="major-1" class="block mb-1 text-sm uppercase font-semibold">Primary Major (Major 1):</label>
+                            <select id="major-1" class="w-full p-2 border-2 rounded-none focus:ring-0 focus:border-rpi-red">
+                                <option value="CSCI" selected>Computer Science</option>
+                            </select>
+                        </div>
+                        <!-- Major 2 - Optional Dual Major -->
+                        <div class="col-span-2 lg:col-span-1">
+                            <label for="major-2" class="block mb-1 text-sm uppercase font-semibold">Dual Major (Major 2):</label>
+                            <select id="major-2" class="w-full p-2 border-2 rounded-none focus:ring-0 focus:border-rpi-red">
+                                <option value="">(None)</option>
+                                <option value="ECON">Economics</option>
+                            </select>
+                        </div>
+                        <!-- Minor 1 -->
+                        <div class="col-span-2 lg:col-span-1">
+                            <label for="minor-1" class="block mb-1 text-sm uppercase font-semibold">Minor 1:</label>
+                            <select id="minor-1" class="w-full p-2 border-2 rounded-none focus:ring-0 focus:border-rpi-red">
+                                <option value="">(None)</option>
+                                <option value="QC">Quantum Computing</option>
+                            </select>
+                        </div>
+                        <!-- Minor 2 -->
+                        <div class="col-span-2 lg:col-span-1">
+                            <label for="minor-2" class="block mb-1 text-sm uppercase font-semibold">Minor 2:</label>
+                            <select id="minor-2" class="w-full p-2 border-2 rounded-none focus:ring-0 focus:border-rpi-red">
+                                <option value="">(None)</option>
+                                <option value="BDS">Behavioral Data Science</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <!-- Scheduling Options -->
+                    <div class="col-span-1 md:col-span-1">
                         <label for="start-term" class="block mb-1 text-sm uppercase font-semibold">Start Term:</label>
                         <select id="start-term" class="w-full p-2 border-2 rounded-none focus:ring-0 focus:border-rpi-red">
                             
@@ -151,7 +186,7 @@
                     </div>
 
                     
-<div class="col-span-1 md:col-span-1">
+                    <div class="col-span-1 md:col-span-1">
                         <label for="arch-away" class="block mb-1 text-sm uppercase font-semibold">Arch Slot:</label>
                         <select id="arch-away" class="w-full p-2 border-2 rounded-none focus:ring-0 focus:border-rpi-red">
                             
@@ -159,7 +194,7 @@
                     </div>
 
                     <button id="recalculate-button" class="col-span-1 md:col-span-2 px-3 py-2 border-2 font-bold uppercase transition duration-150 rounded-none mt-auto text-xl h-full text-white bg-rpi-red border-rpi-red shadow-button hover:opacity-90">
-                        <span class="text-sm sm:text-base">UPDATE PLAN</span>
+                        <span class="text-sm sm:text-base">GENERATE OPTIMIZED PLAN</span>
                     </button>
                 </div>
             </div>
@@ -171,7 +206,7 @@
 
             
 <h2 id="schedule-title" class="text-2xl uppercase font-bold mb-4 border-b pb-1 border-rpi-red text-rpi-red">
-                ACADEMIC CHRONOLOGY (<span id="start-term-display">Fall 2024</span> START)
+                ACADEMIC CHRONOLOGY (<span id="start-term-display">FALL 2024</span> START)
             </h2>
             
             <div id="schedule-grid" class="w-full grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 sm:gap-6">
@@ -193,18 +228,65 @@
         // --- GLOBAL CONSTANTS ---
         const CREDIT_PER_COURSE = 4;
         
-        const ALL_ACADEMIC_SEMESTERS = [
-            { id: 'F1', academicYear: 1, term: 'Fall', courses: [{ code: 'CSCI 1100', name: 'Comp. Sci. I' }, { code: 'MATH 1010', name: 'Calculus I' }, { code: 'PHYS 1000', name: 'Physics I' }, { code: 'HASS XXXX', name: 'HASS Inquiry' }] },
-            { id: 'S1', academicYear: 1, term: 'Spring', courses: [{ code: 'CSCI 1200', name: 'Data Struct.' }, { code: 'MATH 1020', name: 'Calculus II' }, { code: 'CSCI 2200', name: 'Found. CS' }, { code: 'HASS XXXX', name: 'Comm. Intensive' }] },
-            { id: 'F2', academicYear: 2, term: 'Fall', courses: [{ code: 'CSCI 2500', name: 'Comp. Org.' }, { code: 'CSCI 4020', name: 'Algorithms' }, { code: 'MATH 2400', name: 'Diff. Eq.' }, { code: 'Free Elective', name: 'Elective I' }] },
-            { id: 'S2', academicYear: 2, term: 'Spring', courses: [{ code: 'CSCI 4210', name: 'Operating Systems' }, { code: 'MATH 4800', name: 'Prob/Stats' }, { code: 'Minor XXXX', name: 'Minor/Pathway I' }, { code: 'HASS XXXX', name: 'HASS Slot' }] },
-            { id: 'F3', academicYear: 3, term: 'Fall', courses: [{ code: 'CSCI 4050', name: 'Theory of Comp.' }, { code: 'CSCI 4440', name: 'Software Eng.' }, { code: 'HASS 4000', name: '4000-Level HASS' }, { code: 'CSCI XXXX', name: 'CS Elective' }] },
-            { id: 'S3', academicYear: 3, term: 'Spring', courses: [{ code: 'CSCI 4050', name: 'Theory of Comp.' }, { code: 'CSCI 4440', name: 'Software Eng.' }, { code: 'HASS 4000', name: '4000-Level HASS' }, { code: 'CSCI XXXX', name: 'CS Elective' }] },
-            { id: 'F4', academicYear: 4, term: 'Fall', courses: [{ code: 'CSCI 4980', name: 'Capstone I' }, { code: 'CSCI XXXX', name: 'Adv. CS Elective' }, { code: 'Free Elective', name: 'Elective III' }, { code: 'Minor XXXX', name: 'Minor/Pathway II' }] },
-            { id: 'S4', academicYear: 4, term: 'Spring', courses: [{ code: 'CSCI 4990', name: 'Capstone II' }, { code: 'CSCI XXXX', name: 'Adv. CS Elective' }, { code: 'Free Elective', name: 'Elective IV' }, { code: 'Minor XXXX', name: 'Minor/Pathway III' }] },
-        ];
+        // Defines the 8 standard academic slots (F1-S4)
+        const ACADEMIC_SLOT_IDS = ['F1', 'S1', 'F2', 'S2', 'F3', 'S3', 'F4', 'S4'];
         
-        const ARCH_EXPERIENCE = {
+        // --- DATA SCRAPER INTEGRATION POINT 1: COURSE CATALOG ---
+        // This object should eventually be loaded dynamically by the Python data scraper/API
+        // based on the selected Major/Minor combination to ensure the courses are accurate.
+        const COURSE_CATALOG = {
+            'F1': [
+                { code: 'CSCI 1100', name: 'Computer Science I (Major 1/2 Core)' },
+                { code: 'MATH 1010', name: 'Calculus I (Foundation)' },
+                { code: 'PHYS 1100', name: 'Physics I (QC Minor Prereq)' },
+                { code: 'ECON 1000', name: 'Intro to Economics (Major 2 Core)' }
+            ],
+            'S1': [
+                { code: 'CSCI 1200', name: 'Data Structures (Major 1 Core)' },
+                { code: 'MATH 1020', name: 'Calculus II (Foundation)' },
+                { code: 'HASS 1200', name: 'HASS Communication Intensive' },
+                { code: 'ECON 2010', name: 'Microeconomics (Major 2 Core)' }
+            ],
+            'F2': [
+                { code: 'CSCI 2500', name: 'Comp. Organization (Major 1 Core)' },
+                { code: 'CSCI 2200', name: 'Foundations of CS (Major 1 Core)' },
+                { code: 'MATH 2400', name: 'Differential Equations (QC Prereq)' },
+                { code: 'ECON 2020', name: 'Macroeconomics (Major 2 Core)' }
+            ],
+            'S2': [
+                { code: 'CSCI 4020', name: 'Algorithms (Major 1 Core)' },
+                { code: 'MATH 4040', name: 'Linear Algebra (Major 1/QC Core)' },
+                { code: 'MGMT 2100', name: 'Data Modeling (BDS Minor/ECON Elective)' },
+                { code: 'HASS 3000', name: 'HASS Advanced (Major 2 Option)' }
+            ],
+            'F3': [
+                { code: 'CSCI 4210', name: 'Operating Systems (Major 1 Core)' },
+                { code: 'ECON 4600', name: 'Econometrics I (Major 2 Core/BDS)' },
+                { code: 'PHYS 4100', name: 'Intro to Quantum Physics (QC Minor)' },
+                { code: 'CSCI 4350', name: 'Database Systems (Major 1/BDS Elective)' }
+            ],
+            'S3': [
+                { code: 'CSCI 4440', name: 'Software Engineering (Major 1 Core)' },
+                { code: 'ECON 4610', name: 'Econometrics II (Major 2 Core/BDS)' },
+                { code: 'CSCI 4900', name: 'Intro to Quantum Computing (QC Minor)' },
+                { code: 'HASS 4000', name: 'HASS Capstone (Satisfies 4000 Level)' }
+            ],
+            'F4': [
+                { code: 'CSCI 4980', name: 'Capstone Design I (Major 1 Core)' },
+                { code: 'ECON 4400', name: 'Mathematical Economics (Major 2 Capstone)' },
+                { code: 'CSCI 4500', name: 'Machine Learning (BDS Minor/CS Elective)' },
+                { code: 'QC Elective', name: 'Advanced Quantum Topic (QC Minor)' }
+            ],
+            'S4': [
+                { code: 'CSCI 4990', name: 'Capstone Design II (Major 1 Core)' },
+                { code: 'BDS Capstone', name: 'Data Visualization & Ethics (BDS Minor)' },
+                { code: 'CSCI 4100', name: 'Distributed Systems (CS Elective)' },
+                { code: 'ECON Elective', name: 'Policy and Regulation (Major 2 Elective)' }
+            ],
+        };
+
+        
+        const ARCH_EXPERIENCE_BASE = {
             id: 'Arch',
             term: 'Arch Experience',
             courses: [{ code: 'Experiential', name: 'Arch Away Semester' }],
@@ -213,20 +295,30 @@
             academicYear: null,
         };
         
+        // Updated Arch Slot Options - Now includes Sophomore year options (S2 and SUM2)
         const ARCH_SEMESTER_OPTIONS = [
+            { value: 'S2', label: 'S2 - Sophomore Spring' },
+            { value: 'SUM2', label: 'SUM2 - Summer After Sophomore Spring' },
             { value: 'F3', label: 'F3 - Junior Fall' },
-            { value: 'S3', label: 'S3 - Junior Spring' },
+            { value: 'SUM3', label: 'SUM3 - Summer Before Junior Fall' },
+            { value: 'S3', label: 'S3 - Junior Spring' }, 
             { value: 'F4', label: 'F4 - Senior Fall' },
+            { value: 'SUM4', label: 'SUM4 - Summer Before Senior Fall' },
         ];
         
-        const START_TERM_OPTIONS = [
-            { value: 'Fall 2024', label: 'Fall 2024' },
-            { value: 'Spring 2025', label: 'Spring 2025' },
-            { value: 'Fall 2025', label: 'Fall 2025' },
-        ];
+        // Updated Start Term Options (Fall 2022 to Spring 2026)
+        const START_TERM_OPTIONS = [];
+        for (let year = 2022; year <= 2025; year++) {
+            START_TERM_OPTIONS.push({ value: `Fall ${year}`, label: `Fall ${year}` });
+        }
+        for (let year = 2023; year <= 2026; year++) {
+            if (year <= 2026) {
+                START_TERM_OPTIONS.push({ value: `Spring ${year}`, label: `Spring ${year}` });
+            }
+        }
 
-        // --- THEME DEFINITIONS ---
-        // Note: Colors are slightly brighter/more saturated to enhance the retro glow effect.
+
+        // --- THEME DEFINITIONS (Unchanged) ---
         const THEMES = {
             'light-classic': {
                 bodyBg: 'bg-gray-100', bodyText: 'text-gray-900',
@@ -366,75 +458,169 @@
                 console.error("Firebase setup failed, continuing anonymously:", error);
                 userId = crypto.randomUUID();
                 document.getElementById('user-id-display').textContent = `ACADEMIC PLAN GENERATOR (USER ID: ${userId.substring(0, 8)}...)`;
-                renderSchedule();
+                    renderSchedule();
             }
         };
 
-        // --- SCHEDULING LOGIC (Unchanged) ---
+        // --- SCHEDULING LOGIC (Updated to use dynamic course catalog) ---
 
-        const generateChronology = (startTerm, archAwayId) => {
-            const [startSemester, startYearStr] = startTerm.split(' ');
+        const getAcademicSemesters = (major1, major2, minor1, minor2) => {
+            // --- DATA SCRAPER INTEGRATION POINT 2: OPTIMIZATION API CALL ---
+            // Here, we would construct a payload using the major1, major2, minor1, minor2,
+            // and the Arch/Start Term inputs, and make a fetch call to the Python Scraper/Optimizer API
+            // which would return the optimized schedule (a data structure similar to the COURSE_CATALOG,
+            // but with real data and prerequisites checked).
+            // Example payload: { major1, major2, minor1, minor2, startTerm, archAwayId }
+            // const apiResponse = await fetch('/api/optimize-schedule', { method: 'POST', body: JSON.stringify(payload) });
+            // const optimizedSchedule = await apiResponse.json();
+            
+            // For now, we use the fixed COURSE_CATALOG for demonstration purposes.
+            
+            // The list of active requirements
+            const major2Name = document.getElementById('major-2').options[document.getElementById('major-2').selectedIndex].text;
+            const minor1Name = document.getElementById('minor-1').options[document.getElementById('minor-1').selectedIndex].text;
+            const minor2Name = document.getElementById('minor-2').options[document.getElementById('minor-2').selectedIndex].text;
+            
+            const requirements = [
+                major2Name !== '(None)' ? major2Name : null, 
+                minor1Name !== '(None)' ? minor1Name : null, 
+                minor2Name !== '(None)' ? minor2Name : null
+            ].filter(r => r);
+
+            const statusText = `CSCI${requirements.length > 0 ? ', ' + requirements.join(', ') : ''}`;
+
+            return {
+                semesters: ACADEMIC_SLOT_IDS.map(id => ({
+                    id,
+                    academicYear: parseInt(id[1]),
+                    term: id[0] === 'F' ? 'Fall' : 'Spring',
+                    courses: COURSE_CATALOG[id],
+                    credits: COURSE_CATALOG[id].length * CREDIT_PER_COURSE
+                })),
+                statusText
+            };
+        };
+
+
+        const generateChronology = (startTerm, archAwayId, major1, major2, minor1, minor2) => {
+            
+            const { semesters: allAcademicSemesters, statusText } = getAcademicSemesters(major1, major2, minor1, minor2);
+
+            const isSummerArch = archAwayId.startsWith('SUM');
+            
+            // 1. Determine the ACADEMIC slot that is conceptually displaced/removed
+            let displacedAcademicSlotId;
+            const archId = archAwayId;
+
+            // Logic to determine which academic slot is displaced (moved to 5th year or omitted)
+            if (archId === 'S2' || archId === 'SUM2') {
+                displacedAcademicSlotId = 'F3'; 
+            } else if (archId === 'F3' || archId === 'SUM3') {
+                displacedAcademicSlotId = 'S3'; 
+            } else if (archId === 'S3' || archId === 'F4' || archId === 'SUM4') {
+                displacedAcademicSlotId = 'S4';
+            } else {
+                displacedAcademicSlotId = 'F3'; 
+            }
+            
+            const displacedSemester = allAcademicSemesters.find(s => s.id === displacedAcademicSlotId);
+            const academicSlotsBase = allAcademicSemesters.filter(s => s.id !== displacedAcademicSlotId);
+            
+            let finalSequence = [];
+            
+            // 2. Build the final sequence of slots (8 or 9)
+            if (isSummerArch) {
+                // Case 2: 9 Slots (Summer Arch). 
+                let academicSlots = [...allAcademicSemesters];
+                let archInsertionIndex;
+                
+                // The insertion point is the index of the displaced semester
+                archInsertionIndex = ACADEMIC_SLOT_IDS.indexOf(displacedAcademicSlotId);
+                
+                academicSlots.splice(archInsertionIndex, 1);
+                
+                const archSlot = { ...ARCH_EXPERIENCE_BASE };
+                let summerTermName;
+                if (archAwayId === 'SUM2') { summerTermName = 'Summer 2nd Year'; }
+                else if (archAwayId === 'SUM3') { summerTermName = 'Summer 3rd Year'; }
+                else if (archAwayId === 'SUM4') { summerTermName = 'Summer 4th Year'; }
+                
+                archSlot.term = summerTermName;
+                archSlot.id = archAwayId;
+
+                academicSlots.splice(archInsertionIndex, 0, archSlot);
+
+                // Add the displaced semester at the end (9th position)
+                academicSlots.push(displacedSemester);
+                
+                finalSequence = academicSlots; // 9 slots
+            } 
+            else { 
+                // Case 1: 8 Slots (F/S Arch). Displaced slot is omitted.
+                let insertionIndex = ACADEMIC_SLOT_IDS.indexOf(archAwayId);
+                const archSlot = { ...ARCH_EXPERIENCE_BASE, term: archAwayId.includes('F') ? 'Fall Arch' : 'Spring Arch' };
+                archSlot.id = archAwayId;
+
+                finalSequence = [...academicSlotsBase];
+                finalSequence.splice(insertionIndex, 0, archSlot); // Insert Arch at the F/S position
+            }
+            
+            // 3. Map the final sequence to calendar years and names
+            let [currentTerm, startYearStr] = startTerm.split(' ');
             let currentYear = parseInt(startYearStr, 10);
-            let currentTerm = startSemester;
-
-            const archAwayIndex = ALL_ACADEMIC_SEMESTERS.findIndex(s => s.id === archAwayId);
-            
-            const displacedSemester = ALL_ACADEMIC_SEMESTERS[archAwayIndex];
-            const rpiSlotsToUse = ALL_ACADEMIC_SEMESTERS.filter(s => s.id !== archAwayId);
-            
             let finalChronology = [];
-            let rpiSlotCounter = 0;
 
-            for (let i = 0; i < 9; i++) {
+            for (let i = 0; i < finalSequence.length; i++) {
+                const slotContent = finalSequence[i];
                 
-                const chronologicalName = `${currentTerm} ${currentYear}`;
-                let slotContent;
-                let isArchAway = false;
+                let chronologicalName = `${currentTerm} ${currentYear}`;
+                const isArchAway = (slotContent.id === ARCH_EXPERIENCE_BASE.id || slotContent.id.startsWith('SUM'));
+                const isDisplaced = (slotContent.id === displacedSemester.id && !isArchAway && i === finalSequence.length - 1);
                 
-                if (i === archAwayIndex) {
-                    slotContent = ARCH_EXPERIENCE;
-                    isArchAway = true;
-                } 
-                else if (i === 8) {
-                    slotContent = displacedSemester;
-                } 
-                else {
-                    slotContent = rpiSlotsToUse[rpiSlotCounter];
-                    rpiSlotCounter++;
-                }
-
-                const displayCourses = slotContent.courses;
-                const credits = isArchAway ? 0 : displayCourses.length * CREDIT_PER_COURSE;
-                
+                // Determine display year
                 let displayYear;
                 if (isArchAway) {
                     displayYear = 'ARCH';
-                } else if (i === 8) {
+                    if (slotContent.term.startsWith('Summer')) {
+                         displayYear += ' (SUMMER)';
+                    }
+                } else if (isDisplaced) {
                     displayYear = '5TH YEAR';
                 } else {
-                    displayYear = `Y${slotContent.academicYear}`;
+                    // FIX: Calculate academic year based on its chronological index (0-indexed)
+                    // This is the correct, invariant academic year regardless of Arch shifts.
+                    displayYear = `Y${Math.floor(i / 2) + 1}`;
                 }
-
+                
+                const credits = isArchAway ? 0 : slotContent.courses.length * CREDIT_PER_COURSE;
 
                 finalChronology.push({
                     ...slotContent,
                     chronologicalName,
-                    calendarYear: currentYear,
                     semester: currentTerm,
                     credits,
                     isArchAway,
+                    isDisplaced,
                     displayYear
                 });
-
-                if (currentTerm === 'Fall') {
-                    currentTerm = 'Spring';
-                    currentYear += 1;
-                } else { // 'Spring'
-                    currentTerm = 'Fall';
+                
+                // Advance the calendar for the next slot ONLY if it's not the last one
+                if (i < finalSequence.length - 1) {
+                    if (isArchAway && slotContent.term.startsWith('Summer')) {
+                        // SUM 2026 -> F 2026 (Year stays same)
+                        currentTerm = 'Fall';
+                    } else if (currentTerm === 'Fall') {
+                        // F 2026 -> S 2027 (Year increments)
+                        currentTerm = 'Spring';
+                        currentYear += 1;
+                    } else if (currentTerm === 'Spring') {
+                        // S 2027 -> F 2027 (Year stays same)
+                        currentTerm = 'Fall';
+                    }
                 }
             }
 
-            return finalChronology;
+            return { chronology: finalChronology, statusText };
         };
 
         // --- RENDERING FUNCTIONS ---
@@ -508,7 +694,8 @@
             });
 
             // 8. Apply status panel classes
-            statusPanel.className = `w-full p-3 mb-6 border-2 rounded-none border-glow ${theme.configBorder} ${theme.configLabel.replace('text', 'bg').replace('rpi-red', 'green-900')} ${theme.configLabel.replace('rpi-red', 'green-400')}`;
+            // Adjusting background/text color for the status panel to use Green for success/info
+            statusPanel.className = `w-full p-3 mb-6 border-2 rounded-none border-glow border-green-400 bg-gray-900 text-green-400`;
             statusPanel.style.boxShadow = `0 0 5px 1px ${theme.glowColor}, inset 0 0 5px 1px ${theme.glowColor}`;
             statusPanel.style.borderColor = theme.configBorder.split('-').pop();
 
@@ -549,7 +736,7 @@
         const renderSemesterCard = (slot) => {
             const currentTheme = THEMES[document.getElementById('color-theme').value] || THEMES['rpi-red-black'];
             const isArchAway = slot.isArchAway;
-            const isDisplaced = slot.displayYear === '5TH YEAR';
+            const isDisplaced = slot.isDisplaced;
 
             let cardClasses, headerClasses, footerClasses;
 
@@ -592,10 +779,17 @@
         };
 
         const renderSchedule = () => {
-            const startTerm = document.getElementById('start-term').value;
-            const archAwayId = document.getElementById('arch-away').value;
-            
-            const schedule = generateChronology(startTerm, archAwayId);
+            const startTerm = document.getElementById('start-term').value || START_TERM_OPTIONS[0].value;
+            const archAwayId = document.getElementById('arch-away').value || ARCH_SEMESTER_OPTIONS[0].value;
+            // --- DATA SCRAPER INTEGRATION POINT 3: API PARAMETERS ---
+            // These values (major1, major2, minor1, minor2, startTerm, archAwayId)
+            // are the essential parameters that would be passed to the Python data scraper/API.
+            const major1 = document.getElementById('major-1').value;
+            const major2 = document.getElementById('major-2').value;
+            const minor1 = document.getElementById('minor-1').value;
+            const minor2 = document.getElementById('minor-2').value;
+
+            const { chronology: schedule, statusText } = generateChronology(startTerm, archAwayId, major1, major2, minor1, minor2);
             const totalCredits = schedule.reduce((acc, slot) => acc + slot.credits, 0);
 
             const grid = document.getElementById('schedule-grid');
@@ -603,9 +797,18 @@
 
             document.getElementById('start-term-display').textContent = startTerm;
 
+            // Determine the last chronological term for the status message
+            const lastSlot = schedule[schedule.length - 1];
+            const endTerm = lastSlot ? lastSlot.chronologicalName : 'N/A';
+            
             // Update Status Panel
+            const totalSlots = schedule.length;
             const statusPanel = document.getElementById('status-panel');
-            statusPanel.innerHTML = `<span class="font-bold">SYSTEM STATUS:</span> SHOWING **COMPUTER SCIENCE** PLACEHOLDER PLAN. TOTAL PLANNED CREDITS: **${totalCredits}**.`;
+            statusPanel.innerHTML = `
+                <span class="font-bold">SYSTEM STATUS:</span> SIMULATING OPTIMIZED PLAN FOR 
+                <span class="font-extrabold text-rpi-red">${statusText}</span>.
+                LOAD: 16 CREDITS/SEMESTER (4 COURSES). TOTAL SLOTS: ${totalSlots}. ENDS: ${endTerm}. TOTAL CREDITS: **${totalCredits}**.
+            `;
             
         };
 
@@ -615,6 +818,10 @@
             const themeSelect = document.getElementById('color-theme');
             const startTermSelect = document.getElementById('start-term');
             const archAwaySelect = document.getElementById('arch-away');
+            const major1Select = document.getElementById('major-1');
+            const major2Select = document.getElementById('major-2');
+            const minor1Select = document.getElementById('minor-1');
+            const minor2Select = document.getElementById('minor-2');
 
             // Populate selectors
             THEME_OPTIONS.forEach(opt => {
@@ -628,13 +835,13 @@
             });
             
             // Set initial theme based on preference/default
-            let initialTheme = localStorage.getItem('trram-theme') || 'dark-terminal'; // Default to a strong retro theme
+            let initialTheme = localStorage.getItem('trram-theme') || 'rpi-red-black'; // Default to a strong retro theme
             themeSelect.value = initialTheme;
             
             // Event Listeners
-            // Listener for all three config selectors
-            const elementsToListen = [themeSelect, startTermSelect, archAwaySelect];
-            elementsToListen.forEach(el => el.addEventListener('change', () => {
+            // Listener for all config selectors
+            const selectsToWatch = [themeSelect, startTermSelect, archAwaySelect, major1Select, major2Select, minor1Select, minor2Select];
+            selectsToWatch.forEach(el => el.addEventListener('change', () => {
                 if (el.id === 'color-theme') {
                     localStorage.setItem('trram-theme', themeSelect.value);
                     applyTheme(themeSelect.value);
@@ -643,7 +850,7 @@
                 }
             }));
             
-            // Recalculate button listener
+            // Recalculate button listener (also handles click event)
             document.getElementById('recalculate-button').addEventListener('click', () => {
                 applyTheme(themeSelect.value); // Forces theme update and re-render
             });
